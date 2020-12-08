@@ -1,0 +1,51 @@
+body{
+    background: url(https://www.web-canape.ru/files/catalog/835/gallery/big/floristika_1541751338.jpg);
+	background-repeat: no-repeat; 
+    background-size: 100% 120%;
+}
+#block-pass-login{
+  width: 330px;
+  height: auto;
+  border: 1px solid #00008000;
+  background-color: #e0ffff00;
+  margin: 250px auto;
+  margin-left: 645px;
+  margin-top: 440px;
+}
+#pass-login li{
+   margin-top: 10px; 
+}
+#pass-login label{
+   font: 25px Monotype Corsiva;
+   position: absolute;
+   margin-top: -1px;
+   margin-left: -4px;
+}
+#pass-login input{
+   width: 200px;
+   height: 24px;
+   margin-left: 70px;
+   border: 1px solid #D6D6D6;
+   font: 18px Monotype Corsiva;;
+}
+#submit_enter{
+   border: 1px solid #00008000;
+   background-color: #d10808a8;
+   margin-right: 10px; 
+   padding: 4px 6px;
+   font: bold 25px Monotype Corsiva;
+   cursor: pointer;
+}
+#submit_enter:hover{
+   border: 1px solid #8B4513;
+}
+#msgerror{
+   font: 25px Monotype Corsiva;
+   color: red;
+   padding-left: 3px;
+   padding-top: 10px;
+   padding-bottom: 10px;
+   background-color: #FDE5E0;
+   border: 2px solid #fdcdc300;
+   margin-top: 0;
+}
