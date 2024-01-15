@@ -14,7 +14,7 @@ if ($_SESSION['auth_admin'] == "yes_auth")
   
 include("include/db_connect.php");
 include("include/function.php");             
-$id = clear_string($_GET["id"]);
+$id = clear_string($_GET["id"],$link);
 
 if ($_POST["submit_edit"])
 {
@@ -26,7 +26,7 @@ if ($_POST["submit_edit"])
     if (!$_POST["admin_login"]) $error[] = "Укажите логин!";
     if ($_POST["admin_pass"])
     {
-    $pass   = md5(clear_string($_POST["admin_pass"]));
+    $pass   = md5(clear_string($_POST["admin_pass"],$link));
     $pass   = strrev($pass);
     $pass   = "pass='".strtolower("mb03foo51".$pass."qj2jjdp9")."',";      
     }
@@ -44,7 +44,7 @@ if ($_POST["submit_edit"])
     
           $querynew = "login='{$_POST["admin_login"]}',$pass fio='{$_POST["admin_fio"]}',role='{$_POST["admin_role"]}',email='{$_POST["admin_email"]}',phone='{$_POST["admin_phone"]}',view_orders='{$_POST["view_orders"]}',accept_orders='{$_POST["accept_orders"]}',delete_orders='{$_POST["delete_orders"]}',add_tovar='{$_POST["add_tovar"]}',edit_tovar='{$_POST["edit_tovar"]}',delete_tovar='{$_POST["delete_tovar"]}',accept_reviews='{$_POST["accept_reviews"]}',delete_reviews='{$_POST["delete_reviews"]}',view_clients='{$_POST["view_clients"]}',delete_clients='{$_POST["delete_clients"]}',add_news='{$_POST["add_news"]}',delete_news='{$_POST["delete_news"]}',add_category='{$_POST["add_category"]}',delete_category='{$_POST["delete_category"]}',view_admin='{$_POST["view_admin"]}'"; 
            
-          $update = mysql_query("UPDATE reg_admin SET $querynew WHERE id = '$id'",$link); 
+          $update = mysqli_query($link,"UPDATE reg_admin SET $querynew WHERE id = '$id'"); 
      
           $_SESSION['message'] = "<p id='form-success'>Пользователь успешно изменён!</p>";
  }   
@@ -91,11 +91,11 @@ if (isset($msgerror)) echo '<p id="form-error" align="center">'.$msgerror.'</p>'
 	unset($_SESSION['message']);
   }
   
-$result = mysql_query("SELECT * FROM reg_admin WHERE id='$id'",$link);
+$result = mysqli_query($link,"SELECT * FROM reg_admin WHERE id='$id'");
  
- If (mysql_num_rows($result) > 0)
+ If (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 do
 {
 if ($row["view_orders"] == "1") $view_orders = "checked";
@@ -258,7 +258,7 @@ echo '
 ';
 
 }
-  while($row = mysql_fetch_array($result));
+  while($row = mysqli_fetch_array($result));
 }  
   
 ?>

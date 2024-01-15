@@ -15,7 +15,7 @@ if ($_SESSION['auth_admin'] == "yes_auth")
   include("include/db_connect.php");
   include("include/function.php"); 
  
-  $id = clear_string($_GET["id"]);
+  $id = clear_string($_GET["id"],$link);
   $action = $_GET["action"];
   
   if (isset($action))
@@ -25,7 +25,7 @@ if ($_SESSION['auth_admin'] == "yes_auth")
 	    case 'accept':
        if ($_SESSION['accept_orders'] == '1')
        {
-                     $update = mysql_query("UPDATE orders SET order_confirmed='yes' WHERE order_id = '$id'",$link);  
+                     $update = mysqli_query($link,"UPDATE orders SET order_confirmed='yes' WHERE order_id = '$id'");  
        }else
         {
             $msgerror = 'У вас нет прав на подтверждение данного заказа!';
@@ -37,7 +37,7 @@ if ($_SESSION['auth_admin'] == "yes_auth")
         
         if ($_SESSION['delete_orders'] == '1')
         {
-           $delete = mysql_query("DELETE FROM orders WHERE order_id = '$id'",$link); 
+           $delete = mysqli_query($link,"DELETE FROM orders WHERE order_id = '$id'"); 
            header("Location: orders.php");   
         }else
         {
@@ -86,11 +86,11 @@ if (isset($msgerror)) echo '<p id="form-error" align="center">'.$msgerror.'</p>'
 if ($_SESSION['view_orders'] == '1')
 {
 
-	$result = mysql_query("SELECT * FROM orders WHERE order_id = '$id'",$link);
+	$result = mysqli_query($link,"SELECT * FROM orders WHERE order_id = '$id'");
  
- If (mysql_num_rows($result) > 0)
+ If (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 do
 {
 if ($row["order_confirmed"] == 'yes')
@@ -115,11 +115,11 @@ if ($row["order_confirmed"] == 'yes')
 <TH>Количество</TH>
 </TR>
 ';
-$query_product = mysql_query("SELECT * FROM buy_products,table_products 
+$query_product = mysqli_query($link,"SELECT * FROM buy_products,table_products 
 WHERE buy_products.buy_id_order = '$id'
- AND table_products.products_id = buy_products.buy_id_product",$link);
+ AND table_products.products_id = buy_products.buy_id_product");
  
-while ($result_query = mysql_fetch_array($query_product))
+while ($result_query = mysqli_fetch_array($query_product))
 {
 $price = $price + ($result_query["price"] * $result_query["buy_count_product"]);    
 $index_count =  $index_count + 1; 
@@ -172,7 +172,7 @@ echo '
 
  ';   
     
-} while ($row = mysql_fetch_array($result));
+} while ($row = mysqli_fetch_array($result));
 }
     
 }else

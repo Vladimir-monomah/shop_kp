@@ -5,8 +5,8 @@ define('it', true);
    session_start();
    include("include/auth_cookie.php");
    include("function/localization.php");
-   $cat = clear_string($_GET["cat"]);
-   $type = clear_string($_GET["type"]);
+   $cat = clear_string($_GET["cat"],$link);
+   $type = clear_string($_GET["type"],$link);
       
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -75,11 +75,13 @@ define('it', true);
 
     
     
-  $result = mysql_query("SELECT * FROM table_products WHERE visible='1' $query_brand $query_price ORDER BY products_id DESC",$link);  
+  $query = "SELECT * FROM table_products WHERE visible='1' $query_brand $query_price ORDER BY products_id DESC";
+            $result = mysqli_query($link, $query);
 
-if (mysql_num_rows($result) > 0)
+
+if (mysqli_num_rows($result) > 0)
 {
- $row = mysql_fetch_array($result); 
+ $row = mysqli_fetch_array($result); 
  
  echo '
  <div id="block-sorting">
@@ -126,8 +128,8 @@ $width = 110;
 $height = 200;
 } 
   // Количество отзывов 
-$query_reviews = mysql_query("SELECT * FROM table_reviews WHERE products_id = '{$row["products_id"]}' AND moderat='1'",$link);  
-$count_reviews = mysql_num_rows($query_reviews);
+  $query = "SELECT * FROM table_products WHERE visible='1' $query_brand $query_price ORDER BY products_id DESC";
+            $result = mysqli_query($link, $query);
 
   echo '
   
@@ -137,7 +139,7 @@ $count_reviews = mysql_num_rows($query_reviews);
   </div>
   <p class="style-title-grid" ><a href="view_content.php?id='.$row["products_id"].'" >'.localize_text($row["title"], $_SESSION["lang"], $link).'</a></p>
   <a class="add-cart-style-grid" tid="'.$row["products_id"].'"></a>
-  <p class="style-price-grid" ><strong>'.group_numerals( $row[price]).'</strong> '.localize_text('руб.', $_SESSION["lang"], $link).'</p>
+  <p class="style-price-grid" ><strong>'.group_numerals( $row['price']).'</strong> '.localize_text('руб.', $_SESSION["lang"], $link).'</p>
   <div class="mini-features" >
   '.localize_text($row["mini_features"], $_SESSION["lang"], $link).'
   </div>
@@ -147,7 +149,7 @@ $count_reviews = mysql_num_rows($query_reviews);
   
     
  }
-    while ($row = mysql_fetch_array($result));
+    while ($row = mysqli_fetch_array($result));
     
 
 
@@ -159,11 +161,12 @@ $count_reviews = mysql_num_rows($query_reviews);
 
 <?php
 	
-  $result = mysql_query("SELECT * FROM table_products WHERE visible='1' $query_brand $query_price ORDER BY products_id DESC",$link);  
+    $query = "SELECT * FROM table_products WHERE visible='1' $query_brand $query_price ORDER BY products_id DESC";
+    $result = mysqli_query($link, $query);
 
-if (mysql_num_rows($result) > 0)
+if (mysqli_num_rows($result) > 0)
 {
- $row = mysql_fetch_array($result); 
+ $row = mysqli_fetch_array($result); 
  
  do
  {
@@ -187,8 +190,8 @@ $height = 70;
 } 
 
      // Количество отзывов 
-$query_reviews = mysql_query("SELECT * FROM table_reviews WHERE products_id = '{$row["products_id"]}' AND moderat='1'",$link);  
-$count_reviews = mysql_num_rows($query_reviews);
+     $query = "SELECT * FROM table_products WHERE visible='1' $query_brand $query_price ORDER BY products_id DESC";
+     $result = mysqli_query($link, $query);
   
   echo '
   
@@ -200,7 +203,7 @@ $count_reviews = mysql_num_rows($query_reviews);
   <p class="style-title-list" ><a href="view_content.php?id='.$row["products_id"].'" >'.$row["title"].'</a></p>
   
   <a class="add-cart-style-list" tid="'.$row["products_id"].'"></a>
-  <p class="style-price-list" ><strong>'.group_numerals( $row[price]).'</strong> руб.</p>
+  <p class="style-price-list" ><strong>'.group_numerals( $row['price']).'</strong> руб.</p>
   <div class="style-text-list" >
   '.localize_text($row["mini_description"], $_SESSION["lang"], $link).'
   </div>
@@ -210,7 +213,7 @@ $count_reviews = mysql_num_rows($query_reviews);
   
     
  }
-    while ($row = mysql_fetch_array($result));
+    while ($row = mysqli_fetch_array($result));
 }
 }else
 {

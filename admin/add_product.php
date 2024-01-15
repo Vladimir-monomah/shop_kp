@@ -4,121 +4,107 @@ if ($_SESSION['auth_admin'] == "yes_auth")
 {
 	define('it', true);
        
-       if (isset($_GET["logout"]))
+    if (isset($_GET["logout"]))
     {
         unset($_SESSION['auth_admin']);
         header("Location: login.php");
+        exit; // Добавляем exit, чтобы прервать выполнение скрипта после перенаправления
     }
 
-  $_SESSION['urlpage'] = "<a href='index.php' >Главная</a> \ <a href='tovar.php' >Товары</a> \ <a>Новый товар</a>";
+    $_SESSION['urlpage'] = "<a href='index.php' >Главная</a> \\ <a href='tovar.php' >Товары</a> \\ <a>Новый товар</a>";
   
-  include("include/db_connect.php");
-  include("include/function.php"); 
+    include("include/db_connect.php");
+    include("include/function.php"); 
 
-    if ($_POST["submit_add"])
+    if (isset($_POST["submit_add"]))
     {
-if ($_SESSION['add_tovar'] == '1')
- {
-
-      $error = array();
-    
-    // Проверка полей
+        if ($_SESSION['add_tovar'] == '1')
+        {
+            $error = array();
         
-       if (!$_POST["form_title"])
-      {
-         $error[] = "Укажите название товара";
-      }
-      
-       if (!$_POST["form_price"])
-      {
-         $error[] = "Укажите цену";
-      }
-          
-       if (!$_POST["form_category"])
-      {
-         $error[] = "Укажите категорию";         
-      }else
-      {
-       	$result = mysql_query("SELECT * FROM category WHERE id='{$_POST["form_category"]}'",$link);
-        $row = mysql_fetch_array($result);
-        $selectbrand = $row["brand"];
-
-      }
-      
- // Проверка чекбоксов
-      
-       if ($_POST["chk_visible"])
-       {
-          $chk_visible = "1";
-       }else { $chk_visible = "0"; }
-      
-       if ($_POST["chk_new"])
-       {
-          $chk_new = "1";
-       }else { $chk_new = "0"; }
-      
-       if ($_POST["chk_leader"])
-       {
-          $chk_leader= "1";
-       }else { $chk_leader = "0"; }
-      
-       if ($_POST["chk_sale"])
-       {
-          $chk_sale = "1";
-       }else { $chk_sale = "0"; }                   
-      
-                                      
-       if (count($error))
-       {           
-            $_SESSION['message'] = "<p id='form-error'>".implode('<br />',$error)."</p>";
+            // Проверка полей
+        
+            if (!$_POST["form_title"])
+            {
+                $error[] = "Укажите название товара";
+            }
             
-       }else
-       {
-                           
-              		mysql_query("INSERT INTO table_products(title,price,brand,seo_words,seo_description,mini_description,description,mini_features,features,new,leader,sale,visible,type_tovara,brand_id, datetime)
-						VALUES(						
-                            '".$_POST["form_title"]."',
-                            '".$_POST["form_price"]."',
-                            '".$selectbrand."',
-                            '".$_POST["form_seo_words"]."',
-                            '".$_POST["form_seo_description"]."',
-                            '".$_POST["txt1"]."',
-                            '".$_POST["txt2"]."',
-                            '".$_POST["txt3"]."',
-                            '".$_POST["txt4"]."',
-                            '".$chk_new."',
-                            '".$chk_leader."',
-                            '".$chk_sale."',
-                            '".$chk_visible."',
-                            '".$_POST["form_type"]."',
-                            '".$_POST["form_category"]."',
-                            NOW()
-						)",$link);
-                    $_SESSION['message'] = mysql_error();
-      $_SESSION['message'] = "<p id='form-success'>Товар успешно добавлен в базу данных!</p>";
-     
-      $id = mysql_insert_id();
-                 
-       if (empty($_POST["upload_image"]))
-      {        
-      include("actions/upload_gallery.php");
-      unset($_POST["upload_image"]);           
-      } 
-      
-       if (empty($_POST["galleryimg"]))
-      {        
-      include("actions/upload_image.php"); 
-      unset($_POST["galleryimg"]);                 
-      }
-}
-
+            if (!$_POST["form_price"])
+            {
+                $error[] = "Укажите цену";
+            }
+                
+            if (!$_POST["form_category"])
+            {
+                $error[] = "Укажите категорию";         
+            }
+            else
+            {
+                $result = mysqli_query($link,"SELECT * FROM category WHERE id='{$_POST["form_category"]}'",$link);
+                $row = mysqli_fetch_array($result);
+                $selectbrand = $row["brand"];
+            }
+            
+            // Проверка чекбоксов
+            
+            $chk_visible = isset($_POST["chk_visible"]) ? "1" : "0";
+            $chk_new = isset($_POST["chk_new"]) ? "1" : "0";
+            $chk_leader = isset($_POST["chk_leader"]) ? "1" : "0";
+            $chk_sale = isset($_POST["chk_sale"]) ? "1" : "0";
+            
+            if (count($error)) {           
+                $_SESSION['message'] = "<p id='form-error'>".implode('<br />',$error)."</p>";
+            } else {
+                mysqli_query($link,"INSERT INTO table_products(title,price,brand,seo_words,seo_description,mini_description,description,mini_features,features,new,leader,sale,visible,type_tovara,brand_id, datetime)
+                    VALUES(						
+                        '".mysqli_real_escape_string($link, $_POST["form_title"])."',
+                        '".mysqli_real_escape_string($link, $_POST["form_price"])."',
+                        '".mysqli_real_escape_string($link, $selectbrand)."',
+                        '".mysqli_real_escape_string($link, $_POST["form_seo_words"])."',
+                        '".mysqli_real_escape_string($link, $_POST["form_seo_description"])."',
+                        '".mysqli_real_escape_string($link, $_POST["txt1"])."',
+                        '".mysqli_real_escape_string($link, $_POST["txt2"])."',
+                        '".mysqli_real_escape_string($link, $_POST["txt3"])."',
+                        '".mysqli_real_escape_string($link, $_POST["txt4"])."',
+                        '".mysqli_real_escape_string($link, $chk_new)."',
+                        '".mysqli_real_escape_string($link, $chk_leader)."',
+                        '".mysqli_real_escape_string($link, $chk_sale)."',
+                        '".mysqli_real_escape_string($link, $chk_visible)."',
+                        '".mysqli_real_escape_string($link, $_POST["form_type"])."',
+                        '".mysqli_real_escape_string($link, $_POST["form_category"])."',
+                        NOW()
+                    )");
+                if (mysqli_error($link)) {
+                    $_SESSION['message'] = "<p id='form-error'>Ошибка: " . mysqli_error($link) . "</p>";
+                } else {
+                    $id = mysqli_insert_id($link);
+                    $_SESSION['message'] = "<p id='form-success'>Товар успешно добавлен в базу данных!</p>";
+                }
+            }
     
-} else
- {
-   $msgerror = 'У вас нет прав на добавление товаров!'; 
- }         
-    }   
-
+            if (empty($_POST["upload_image"]))
+            {        
+                include("actions/upload_gallery.php");
+                unset($_POST["upload_image"]);           
+            } 
+            
+            if (empty($_POST["galleryimg"]))
+            {        
+                include("actions/upload_image.php"); 
+                unset($_POST["galleryimg"]);                 
+            }
+        }    
+    } 
+    else
+    {
+        $msgerror = 'У вас нет прав на добавление товаров!'; 
+    }         
+}   
+else
+{
+    header("Location: login.php");
+    exit; // Добавляем exit, чтобы прервать выполнение скрипта после перенаправления
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -307,7 +293,6 @@ do
 </body>
 </html>
 <?php
-}else
 {
     header("Location: login.php");
 }

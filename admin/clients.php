@@ -14,7 +14,7 @@ if ($_SESSION['auth_admin'] == "yes_auth")
   
 include("include/db_connect.php");
 include("include/function.php");             
-$id = clear_string($_GET["id"]);
+$id = clear_string($_GET["id"],$link);
 $action = $_GET["action"];
 if (isset($action))
 {
@@ -24,7 +24,7 @@ if (isset($action))
       if ($_SESSION['delete_clients'] == '1')
       {
 
-         $delete = mysql_query("DELETE FROM reg_user WHERE id = '$id'",$link);      
+         $delete = mysqli_query("DELETE FROM reg_user WHERE id = '$id'",$link);      
               
       }else
       {
@@ -55,8 +55,8 @@ if (isset($action))
 <div id="block-body">
 <?php
 	include("include/block-header.php");
-    $all_client = mysql_query("SELECT * FROM reg_user",$link);
-    $result_count = mysql_num_rows($all_client);
+    $all_client = mysqli_query($link,"SELECT * FROM reg_user");
+    $result_count = mysqli_num_rows($all_client);
    
 ?>
 <!--Основной блок контента -->
@@ -74,10 +74,10 @@ if ($_SESSION['view_clients'] == '1')
 $num = 4;
 
     $page = strip_tags($_GET['page']);              
-    $page = mysql_real_escape_string($page);
+    $page = mysqli_real_escape_string($page);
 
-$count = mysql_query("SELECT COUNT(*) FROM reg_user",$link);
-$temp = mysql_fetch_array($count);
+$count = mysqli_query($link,"SELECT COUNT(*) FROM reg_user");
+$temp = mysqli_fetch_array($count);
 $post = $temp[0];
 // Находим общее число страниц
 $total = (($post - 1) / $num) + 1;
@@ -95,11 +95,11 @@ $start = $page * $num - $num;
 	
 if ($temp[0] > 0)   
 { 
-$result = mysql_query("SELECT * FROM reg_user ORDER BY id DESC LIMIT $start, $num",$link);
+$result = mysqli_query($link,"SELECT * FROM reg_user ORDER BY id DESC LIMIT $start, $num");
  
- If (mysql_num_rows($result) > 0)
+ If (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 do
 {
  
@@ -125,7 +125,7 @@ do
  </div>
  ';   
     
-} while ($row = mysql_fetch_array($result));
+} while ($row = mysqli_fetch_array($result));
 }   
 }    
 if ($page != 1) $pervpage = '<li><span><a href="clients.php?page='. ($page - 1) .'" />Назад</a></span></li>';

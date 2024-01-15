@@ -14,7 +14,7 @@ if ($_SESSION['auth_admin'] == "yes_auth")
   
 include("include/db_connect.php");
 include("include/function.php");             
-$id = clear_string($_GET["id"]);
+$id = clear_string($_GET["id"],$link);
 $action = $_GET["action"];
 if (isset($action))
 {
@@ -23,7 +23,7 @@ if (isset($action))
         case 'delete':
       if ($_SESSION['auth_admin_login'] == 'admin')
       {
-        $delete = mysql_query("DELETE FROM reg_admin WHERE id = '$id'",$link); 
+        $delete = mysqli_query($link,"DELETE FROM reg_admin WHERE id = '$id'"); 
       }else
       {
          $msgerror = 'У вас нет прав на удаление администраторов!';
@@ -71,11 +71,11 @@ if ($_SESSION['view_admin'] == '1')
 {
 
 
-	$result = mysql_query("SELECT * FROM reg_admin ORDER BY id DESC",$link);
+	$result = mysqli_query($link,"SELECT * FROM reg_admin ORDER BY id DESC");
  
- If (mysql_num_rows($result) > 0)
+ If (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 do
 {  
     
@@ -92,7 +92,7 @@ echo '
     ';
     
     
-} while ($row = mysql_fetch_array($result));
+} while ($row = mysqli_fetch_array($result));
 }
     
 }else{

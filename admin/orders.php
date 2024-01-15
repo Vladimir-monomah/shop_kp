@@ -71,14 +71,14 @@ if ($_SESSION['auth_admin'] != "yes_auth")
 <?php
 	include("include/block-header.php");
     
- $all_count = mysql_query("SELECT * FROM orders",$link);
- $all_count_result = mysql_num_rows($all_count);
+ $all_count = mysqli_query($link,"SELECT * FROM orders");
+ $all_count_result = mysqli_num_rows($all_count);
 
- $buy_count = mysql_query("SELECT * FROM orders WHERE order_confirmed = 'yes'",$link);
- $buy_count_result = mysql_num_rows($buy_count);
+ $buy_count = mysqli_query($link,"SELECT * FROM orders WHERE order_confirmed = 'yes'");
+ $buy_count_result = mysqli_num_rows($buy_count);
 
- $no_buy_count = mysql_query("SELECT * FROM orders WHERE order_confirmed = 'no'",$link);
- $no_buy_count_result = mysql_num_rows($no_buy_count); 
+ $no_buy_count = mysqli_query($link,"SELECT * FROM orders WHERE order_confirmed = 'no'");
+ $no_buy_count_result = mysqli_num_rows($no_buy_count); 
  
 echo "
 <!--Основной блок контента -->
@@ -106,11 +106,11 @@ echo "
 </ul>
 </div>
 ";
-	$result = mysql_query("SELECT * FROM orders ORDER BY $sort",$link);
+	$result = mysqli_query($link,"SELECT * FROM orders ORDER BY $sort");
  
- If (mysql_num_rows($result) > 0)
+ If (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 do
 {
 if ($row["order_confirmed"] == 'yes')
@@ -130,7 +130,7 @@ if ($row["order_confirmed"] == 'yes')
  </div>
  ';   
     
-} while ($row = mysql_fetch_array($result));
+} while ($row = mysqli_fetch_array($result));
 }
 ?>
 </div>

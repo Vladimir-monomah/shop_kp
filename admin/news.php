@@ -27,12 +27,12 @@ include("include/function.php");
     }
     else
     {
-       	mysql_query("INSERT INTO news(title,text,date)
+       	mysqli_query($link,"INSERT INTO news(title,text,date)
 						VALUES(	
                             '".$_POST["news_title"]."',
                             '".$_POST["news_text"]."',					
 							NOW()                                                                     
-						    )",$link); 
+						    )"); 
        $message = "<p id='form-success' >Новость добавлена!</p>";                     
     }
          
@@ -43,7 +43,7 @@ include("include/function.php");
  
  }
              
-$id = clear_string($_GET["id"]);
+$id = clear_string($_GET["id"],$link);
 $action = $_GET["action"];
 if (isset($action))
 {
@@ -52,7 +52,7 @@ if (isset($action))
         case 'delete':
       if ($_SESSION['delete_news'] == '1')
       {
-        $delete = mysql_query("DELETE FROM news WHERE id = '$id'",$link);  
+        $delete = mysqli_query($link,"DELETE FROM news WHERE id = '$id'");  
       }
       else
       {
@@ -93,8 +93,8 @@ if (isset($action))
 <div id="block-body">
 <?php
 	include("include/block-header.php");
-    $all_count = mysql_query("SELECT * FROM news",$link);
-    $result_count = mysql_num_rows($all_count);
+    $all_count = mysqli_query($link,"SELECT * FROM news");
+    $result_count = mysqli_num_rows($all_count);
    
 ?>
 <!--Основной блок контента -->
@@ -109,11 +109,11 @@ if (isset($msgerror)) echo '<p id="form-error" align="center">'.$msgerror.'</p>'
 
 if ($message != "") echo $message;
 
-$result = mysql_query("SELECT * FROM news ORDER BY id DESC",$link);
+$result = mysqli_query($link,"SELECT * FROM news ORDER BY id DESC");
  
- If (mysql_num_rows($result) > 0)
+ If (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 do
 {  
     
@@ -132,7 +132,7 @@ do
     ';
     
     
-} while ($row = mysql_fetch_array($result));
+} while ($row = mysqli_fetch_array($result));
 } 	
 ?>
 <div id="news">

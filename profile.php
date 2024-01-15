@@ -11,12 +11,12 @@ if ($_SESSION['auth'] == 'yes_auth')
    if ($_POST["save_submit"])
      {
         
-    $_POST["info_surname"] = clear_string($_POST["info_surname"]);
-    $_POST["info_name"] = clear_string($_POST["info_name"]);
-    $_POST["info_patronymic"] = clear_string($_POST["info_patronymic"]);
-    $_POST["info_address"] = clear_string($_POST["info_address"]);
-    $_POST["info_phone"] = clear_string($_POST["info_phone"]);
-    $_POST["info_email"] = clear_string($_POST["info_email"]);     
+    $_POST["info_surname"] = clear_string($_POST["info_surname"],$link);
+    $_POST["info_name"] = clear_string($_POST["info_name"],$link);
+    $_POST["info_patronymic"] = clear_string($_POST["info_patronymic"],$link);
+    $_POST["info_address"] = clear_string($_POST["info_address"],$link);
+    $_POST["info_phone"] = clear_string($_POST["info_phone"],$link);
+    $_POST["info_email"] = clear_string($_POST["info_email"],$link);     
               
     $error = array();
 	
@@ -37,7 +37,7 @@ if ($_SESSION['auth'] == 'yes_auth')
 		           $error[]='Укажите новый пароль от 3 до 15 символов!';
 	            }else
                 {
-                     $newpass   = md5(clear_string($_POST["info_new_pass"]));
+                     $newpass   = md5(clear_string($_POST["info_new_pass"],$link));
                      $newpass   = strrev($newpass);
                      $newpass   = "9nm2rv8q".$newpass."2yo6z";
                      $newpassquery = "pass='".$newpass."',";
@@ -83,29 +83,27 @@ if ($_SESSION['auth'] == 'yes_auth')
         
     }
     
-  if(count($error))
-	{
-		$_SESSION['msg'] = "<p align='left' id='form-error'>".implode('<br />',$error)."</p>";
-	}else
-    {
+    if (count($error)) {
+        $_SESSION['msg'] = "<p align='left' id='form-error'>" . implode('<br />', $error) . "</p>";
+    } else {
         $_SESSION['msg'] = "<p align='left' id='form-success'>Данные успешно изменены!</p>";
-           
-     $dataquery = $newpassquery."surname='".$_POST["info_surname"]."',name='".$_POST["info_name"]."',patronymic='".$_POST["info_patronymic"]."',email='".$_POST["info_email"]."',phone='".$_POST["info_phone"]."',address='".$_POST["info_address"]."'";      
-     $update = mysql_query("UPDATE reg_user SET $dataquery WHERE login = '{$_SESSION['auth_login']}'",$link);
-      
-    if ($newpass){ $_SESSION['auth_pass'] = $newpass; } 
     
-    
-    $_SESSION['auth_surname'] = $_POST["info_surname"];
-    $_SESSION['auth_name'] = $_POST["info_name"];
-    $_SESSION['auth_patronymic'] = $_POST["info_patronymic"];
-    $_SESSION['auth_address'] = $_POST["info_address"];
-    $_SESSION['auth_phone'] = $_POST["info_phone"];
-    $_SESSION['auth_email'] = $_POST["info_email"];    
+        $dataquery = $newpassquery . "surname='" . $_POST["info_surname"] . "',name='" . $_POST["info_name"] . "',patronymic='" . $_POST["info_patronymic"] . "',email='" . $_POST["info_email"] . "',phone='" . $_POST["info_phone"] . "',address='" . $_POST["info_address"] . "'";
         
+        $update = mysqli_query($link, "UPDATE reg_user SET $dataquery WHERE login = '{$_SESSION['auth_login']}'");
+        
+        if ($newpass) {
+            $_SESSION['auth_pass'] = $newpass;
+        }
+    
+        $_SESSION['auth_surname'] = $_POST["info_surname"];
+        $_SESSION['auth_name'] = $_POST["info_name"];
+        $_SESSION['auth_patronymic'] = $_POST["info_patronymic"];
+        $_SESSION['auth_address'] = $_POST["info_address"];
+        $_SESSION['auth_phone'] = $_POST["info_phone"];
+        $_SESSION['auth_email'] = $_POST["info_email"];
     }
-        
-     } 
+    
        
        
 ?>

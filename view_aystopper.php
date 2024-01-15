@@ -7,7 +7,7 @@ define('it', true);
    include("function/localization.php");
  
  
-    $go = clear_string($_GET["go"]);
+    $go = clear_string($_GET["go"],$link);
     
     switch ($go) {
 
@@ -117,8 +117,9 @@ switch ($sorting)
 	$num = 6; // Здесь указываем сколько хотим выводить товаров.
     $page = (int)$_GET['page'];              
     
-	$count = mysql_query("SELECT COUNT(*) FROM table_products $query_aystopper",$link);
-    $temp = mysql_fetch_array($count);
+    $count_query = "SELECT COUNT(*) FROM table_products $query_aystopper";
+    $count_result = mysqli_query($link, $count_query);
+    $temp = mysqli_fetch_array($count_result);
 
 	If ($temp[0] > 0)
 	{  
@@ -171,11 +172,11 @@ If ($temp[0] > 0)
 <ul id="block-tovar-grid" type="none">
 <?php
 	
-  $result = mysql_query("SELECT * FROM table_products $query_aystopper ORDER BY $sorting $qury_start_num ",$link);  
+    $result = mysqli_query($link, "SELECT * FROM table_products $query_aystopper ORDER BY $sorting $qury_start_num");
 
-if (mysql_num_rows($result) > 0)
+if (mysqli_num_rows($result) > 0)
 {
- $row = mysql_fetch_array($result); 
+ $row = mysqli_fetch_array($result); 
  
  do
  {
@@ -199,8 +200,9 @@ $height = 200;
 } 
   
    // Количество отзывов 
-$query_reviews = mysql_query("SELECT * FROM table_reviews WHERE products_id = '{$row["products_id"]}' AND moderat='1'",$link);  
-$count_reviews = mysql_num_rows($query_reviews);
+   $query_reviews = mysqli_query($link, "SELECT * FROM table_reviews WHERE products_id = '{$row["products_id"]}' AND moderat='1'");
+   $count_reviews = mysqli_num_rows($query_reviews);
+   
   
   echo '
   
@@ -210,7 +212,7 @@ $count_reviews = mysql_num_rows($query_reviews);
   </div>
   <p class="style-title-grid" ><a href="view_content.php?id='.$row["products_id"].'" >'.$row["title"].'</a></p>
   <a class="add-cart-style-grid" tid="'.$row["products_id"].'"></a>
-  <p class="style-price-grid" ><strong>'.group_numerals( $row[price]).'</strong> руб.</p>
+  <p class="style-price-grid" ><strong>'.group_numerals( $row['price']).'</strong> руб.</p>
   <div class="mini-features" >
   '.$row["mini_features"].'
   </div>
@@ -220,7 +222,7 @@ $count_reviews = mysql_num_rows($query_reviews);
   
     
  }
-    while ($row = mysql_fetch_array($result));
+    while ($row = mysqli_fetch_array($result));
 }    
 
 
@@ -232,11 +234,13 @@ $count_reviews = mysql_num_rows($query_reviews);
 
 <?php
 	
-  $result = mysql_query("SELECT * FROM table_products $query_aystopper ORDER BY $sorting $qury_start_num",$link);  
+    $query = "SELECT * FROM table_products $query_aystopper ORDER BY $sorting $qury_start_num";
+    $result = mysqli_query($link, $query);
+      
 
-if (mysql_num_rows($result) > 0)
+if (mysqli_num_rows($result) > 0)
 {
- $row = mysql_fetch_array($result); 
+ $row = mysqli_fetch_array($result); 
  
  do
  {
@@ -260,8 +264,10 @@ $height = 70;
 } 
   
   // Количество отзывов 
-$query_reviews = mysql_query("SELECT * FROM table_reviews WHERE products_id = '{$row["products_id"]}' AND moderat='1'",$link);  
-$count_reviews = mysql_num_rows($query_reviews);
+  $query = "SELECT * FROM table_reviews WHERE products_id = '{$row["products_id"]}' AND moderat='1'";
+  $query_reviews = mysqli_query($link, $query);
+  $count_reviews = mysqli_num_rows($query_reviews);
+  
   
   echo '
   
@@ -273,7 +279,7 @@ $count_reviews = mysql_num_rows($query_reviews);
   <p class="style-title-list" ><a href="view_content.php?id='.$row["products_id"].'" >'.$row["title"].'</a></p>
   
   <a class="add-cart-style-list" tid="'.$row["products_id"].'"></a>
-  <p class="style-price-list" ><strong>'.group_numerals( $row[price]).'</strong> руб.</p>
+  <p class="style-price-list" ><strong>'.group_numerals( $row['price']).'</strong> руб.</p>
   <div class="style-text-list" >
   '.$row["mini_description"].'
   </div>
@@ -283,7 +289,7 @@ $count_reviews = mysql_num_rows($query_reviews);
   
     
  }
-    while ($row = mysql_fetch_array($result));
+    while ($row = mysqli_fetch_array($result));
 }    
 
 echo '</ul>';

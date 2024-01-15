@@ -6,26 +6,24 @@
    include("include/auth_cookie.php");
    include("function/localization.php");
   
-     $id = clear_string($_GET["id"]);
-     $action = clear_string($_GET["action"]);
+     $id = clear_string($_GET["id"],$link);
+     $action = clear_string($_GET["action"],$link);
     $user_uid = isset($_SESSION['id']) ? $_SESSION['id'] : $_SERVER['REMOTE_ADDR'];
    switch ($action) {
 
       case 'clear':
-        $clear = mysql_query("DELETE FROM cart WHERE cart_ip = '{$user_uid}'",$link);     
+        $clear = mysqli_query($link,"DELETE FROM cart WHERE cart_ip = '{$user_uid}'");     
       break;
         
         case 'delete':     
-        $delete = mysql_query("DELETE FROM cart WHERE cart_id = '$id' AND cart_ip = '{$user_uid}'",$link);        
+        $delete = mysqli_query($link,"DELETE FROM cart WHERE cart_id = '$id' AND cart_ip = '{$user_uid}'",$link);        
         break;
         
     case 'pay':
     // Подтверждение оплаты товара в корзине и его удаление из корзины
-    mysql_query("UPDATE orders SET order_pay = 'accepted' WHERE order_id='".$_GET["order_id"]."'",$link) 
-    or die (mysql_error());
+    mysqli_query($link,"UPDATE orders SET order_pay = 'accepted' WHERE order_id='".$_GET["order_id"]."'");
 	
-    mysql_query("DELETE FROM cart WHERE cart.cart_ip = '{$user_uid}'",$link) 
-	or die (mysql_error());
+    mysqli_query($link,"DELETE FROM cart WHERE cart.cart_ip = '{$user_uid}'");
 
     header("Location: index.php");
     die();
@@ -37,77 +35,65 @@ if (isset($_POST["submitdata"]))
 if ( $_SESSION['auth'] == 'yes_auth' ) 
  {
         
-    mysql_query("INSERT INTO orders(order_datetime,  order_confirmed,order_dostavka,order_fio,order_address,order_phone,order_note,order_email)
-            VALUES(  
-                             NOW(),
-                             'no',
-                            '".$_POST["order_delivery"]."',          
-              '".$_SESSION['auth_surname'].' '.$_SESSION['auth_name'].' '.$_SESSION['auth_patronymic']."',
-                            '".$_SESSION['auth_address']."',
-                            '".$_SESSION['auth_phone']."',
-                            '".$_POST['order_note']."',
-                            '".$_SESSION['auth_email']."'                              
-                )",$link) or die(mysql_error());
-
- }else
+   $query = "INSERT INTO orders (order_datetime, order_confirmed, order_dostavka, order_fio, order_address, order_phone, order_note, order_email)
+   VALUES (
+       NOW(),
+       'no',
+       '".mysqli_real_escape_string($link, $_POST["order_delivery"])."',
+       '".mysqli_real_escape_string($link, $_SESSION['auth_surname'].' '.$_SESSION['auth_name'].' '.$_SESSION['auth_patronymic'])."',
+       '".mysqli_real_escape_string($link, $_SESSION['auth_address'])."',
+       '".mysqli_real_escape_string($link, $_SESSION['auth_phone'])."',
+       '".mysqli_real_escape_string($link, $_POST['order_note'])."',
+       '".mysqli_real_escape_string($link, $_SESSION['auth_email'])."'
+   )";
+   if (mysqli_query($link, $query)) {
+      // Запрос выполнен успешно
+      echo "Данные успешно добавлены в базу.";
+  } else {
+      // Произошла ошибка при выполнении запроса
+      echo "Ошибка: " . mysqli_error($link);
+  }
+}else
  {
 $_SESSION["order_fio"] = $_POST["order_fio"];
 $_SESSION["order_email"] = $_POST["order_email"];
 $_SESSION["order_phone"] = $_POST["order_phone"];
 $_SESSION["order_address"] = $_POST["order_address"];
 
-    mysql_query("INSERT INTO orders(order_datetime,order_confirmed,order_dostavka,order_fio,order_address,order_phone,order_note,order_email)
-            VALUES(  
-                             NOW(),
-                            'no',
-                            '".clear_string($_POST["order_delivery"])."',          
-              '".clear_string($_POST["order_fio"])."',
-                            '".clear_string($_POST["order_address"])."',
-                            '".clear_string($_POST["order_phone"])."',
-                            '".clear_string($_POST["order_note"])."',
-                            '".clear_string($_POST["order_email"])."'                   
-                )",$link) or die(mysql_error());    
- }
-           
+mysqli_query($link, "INSERT INTO orders (order_datetime, order_confirmed, order_dostavka, order_fio, order_address, order_phone, order_note, order_email)
+VALUES (  
+                 NOW(),
+                'no',
+                '".clear_string($_POST["order_delivery"], $link)."',          
+  '".clear_string($_POST["order_fio"], $link)."',
+                '".clear_string($_POST["order_address"], $link)."',
+                '".clear_string($_POST["order_phone"], $link)."',
+                '".clear_string($_POST["order_note"], $link)."',
+                '".clear_string($_POST["order_email"], $link)."'                   
+    )") or die(mysqli_error($link));    
+}
+
 $_SESSION["order_delivery"] = $_POST["order_delivery"];        
 $_SESSION["order_note"] = $_POST["order_note"];       
- $_SESSION["order_id"] = mysql_insert_id();                          
-                            
-$result = mysql_query("SELECT * FROM cart WHERE cart_ip = '{$user_uid}'",$link);
-If (mysql_num_rows($result) > 0)
+$_SESSION["order_id"] = mysqli_insert_id($link);                          
+
+$result = mysqli_query($link, "SELECT * FROM cart WHERE cart_ip = '{$user_uid}'");
+if (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);    
+$row = mysqli_fetch_array($result);    
 
-do{
-
-    mysql_query("INSERT INTO buy_products(buy_id_order,buy_id_product,buy_count_product)
-            VALUES(  
-                            '".$_SESSION["order_id"]."',          
-              '".$row["cart_id_products"]."',
-                            '".$row["cart_count"]."'                   
-                )",$link);
-
-
-
-} while ($row = mysql_fetch_array($result));
+do {
+mysqli_query($link, "INSERT INTO buy_products (buy_id_order, buy_id_product, buy_count_product)
+VALUES (  
+                '".$_SESSION["order_id"]."',          
+  '".$row["cart_id_products"]."',
+                '".$row["cart_count"]."'                   
+    )");
+} while ($row = mysqli_fetch_array($result));
 }
-                            
+
 header("Location: cart.php?action=completion");
-}      
-
-
-$result = mysql_query("SELECT * FROM cart,table_products WHERE cart.cart_ip = '{$user_uid}' AND table_products.products_id = cart.cart_id_products",$link);
-If (mysql_num_rows($result) > 0)
-{
-$row = mysql_fetch_array($result);
-
-do
-{ 
-$int = $int + ($row["price"] * $row["cart_count"]); 
 }
- while ($row = mysql_fetch_array($result));
- $itogpricecart = $int;
-}     
 ?>
 <!--Элемент DOCTYPE -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -151,7 +137,7 @@ $int = $int + ($row["price"] * $row["cart_count"]);
 
 <?php
 
-  $action = clear_string($_GET["action"]);
+  $action = clear_string($_GET["action"],$link);
   switch ($action) {
 
       case 'oneclick':
@@ -173,11 +159,11 @@ $int = $int + ($row["price"] * $row["cart_count"]);
 ';
   
    
-$result = mysql_query("SELECT * FROM cart,table_products WHERE cart.cart_ip = '{$user_uid}' AND table_products.products_id = cart.cart_id_products",$link);
+$result = mysqli_query($link,"SELECT * FROM cart,table_products WHERE cart.cart_ip = '{$user_uid}' AND table_products.products_id = cart.cart_id_products");
 
-If (mysql_num_rows($result) > 0)
+If (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 
    echo '  
    <div id="header-list-cart">    
@@ -256,7 +242,7 @@ echo '
 
     
 }
- while ($row = mysql_fetch_array($result));
+ while ($row = mysqli_fetch_array($result));
  
  echo '
  <h2 class="itog-price" align="right">Итого: <strong>'.group_numerals($all_price).'</strong> руб</h2>
@@ -413,11 +399,11 @@ echo '
 ';
   
    
-$result = mysql_query("SELECT * FROM cart,table_products WHERE cart.cart_ip = '{$user_uid}' AND table_products.products_id = cart.cart_id_products",$link);
+$result = mysqli_query($link,"SELECT * FROM cart,table_products WHERE cart.cart_ip = '{$user_uid}' AND table_products.products_id = cart.cart_id_products");
 
-If (mysql_num_rows($result) > 0)
+If (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 
    echo '  
    <div id="header-list-cart">    
@@ -496,7 +482,7 @@ echo '
 
     
 }
- while ($row = mysql_fetch_array($result));
+ while ($row = mysqli_fetch_array($result));
  
  echo '
  <h2 class="itog-price" align="right">Итого: <strong>'.group_numerals($all_price).'</strong> руб</h2>

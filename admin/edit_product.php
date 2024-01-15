@@ -14,8 +14,8 @@ if ($_SESSION['auth_admin'] == "yes_auth")
   
   include("include/db_connect.php");
   include("include/function.php"); 
-  $id = clear_string($_GET["id"]);
-  $action = clear_string($_GET["action"]);
+  $id = clear_string($_GET["id"],$link);
+  $action = clear_string($_GET["action"],$link);
 if (isset($action))
 {
    switch ($action) {
@@ -62,8 +62,8 @@ if (isset($action))
          $error[] = "Укажите категорию";         
       }else
       {
-       	$result = mysql_query("SELECT * FROM category WHERE id='{$_POST["form_category"]}'",$link);
-        $row = mysql_fetch_array($result);
+       	$result = mysqli_query($link,"SELECT * FROM category WHERE id='{$_POST["form_category"]}'");
+        $row = mysqli_fetch_array($result);
         $selectbrand = $row["brand"];
 
       }
@@ -113,7 +113,7 @@ if (isset($action))
                            
        $querynew = "title='{$_POST["form_title"]}',price='{$_POST["form_price"]}',brand='$selectbrand',seo_words='{$_POST["form_seo_words"]}',seo_description='{$_POST["form_seo_description"]}',mini_description='{$_POST["txt1"]}',description='{$_POST["txt2"]}',mini_features='{$_POST["txt3"]}',features='{$_POST["txt4"]}',new='$chk_new',leader='$chk_leader',sale='$chk_sale',visible='$chk_visible',type_tovara='{$_POST["form_type"]}',brand_id='{$_POST["form_category"]}'"; 
            
-       $update = mysql_query("UPDATE table_products SET $querynew WHERE products_id = '$id'",$link); 
+       $update = mysqli_query($link,"UPDATE table_products SET $querynew WHERE products_id = '$id'"); 
                    
       $_SESSION['message'] = "<p id='form-success'>Товар успешно обновлён!</p>";
                 
@@ -168,11 +168,11 @@ if (isset($msgerror)) echo '<p id="form-error" align="center">'.$msgerror.'</p>'
 		} 
 ?>
 <?php
-	$result = mysql_query("SELECT * FROM table_products WHERE products_id='$id'",$link);
+	$result = mysqli_query($link,"SELECT * FROM table_products WHERE products_id='$id'");
     
-If (mysql_num_rows($result) > 0)
+If (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 do
 {
     
@@ -202,11 +202,11 @@ echo '
 </li>
 ';    
     
-$category = mysql_query("SELECT * FROM category",$link);
+$category = mysqli_query($link,"SELECT * FROM category");
     
-If (mysql_num_rows($category) > 0)
+If (mysqli_num_rows($category) > 0)
 {
-$result_category = mysql_fetch_array($category);
+$result_category = mysqli_fetch_array($category);
 
 if ($row["type_tovara"] == "paper") $type_paper = "selected";
 if ($row["type_tovara"] == "paints") $type_paints = "selected";
@@ -244,7 +244,7 @@ do
   ';
     
 }
- while ($result_category = mysql_fetch_array($category));
+ while ($result_category = mysqli_fetch_array($category));
 }
 echo '
 </select>
@@ -351,12 +351,12 @@ echo '
 <ul id="gallery-img"> 
  ';
  
-$query_img = mysql_query("SELECT * FROM uploads_images WHERE products_id='$id'",$link);
+$query_img = mysqli_query($link,"SELECT * FROM uploads_images WHERE products_id='$id'");
 
-If (mysql_num_rows($query_img) > 0)
+If (mysqli_num_rows($query_img) > 0)
 {
     
-$result_img = mysql_fetch_array($query_img);
+$result_img = mysqli_fetch_array($query_img);
 do
 {
 if  (strlen($result_img["image"]) > 0 && file_exists("../uploads_images/".$result_img["image"]))
@@ -394,7 +394,7 @@ echo '
 echo '</li>';
     
     
-}while ($result_img = mysql_fetch_array($query_img));
+}while ($result_img = mysqli_fetch_array($query_img));
 } 
  
  
@@ -422,7 +422,7 @@ echo '
 </form>
 ';
 
-}while ($row = mysql_fetch_array($result));
+}while ($row = mysqli_fetch_array($result));
 }
 ?> 
 

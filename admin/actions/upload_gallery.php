@@ -32,7 +32,7 @@ if($_FILES['galleryimg']['name'][0]){
                              
     if(@move_uploaded_file($_FILES['galleryimg']['tmp_name'][$i], $uploadfile)){
                                 
-         		mysql_query("INSERT INTO uploads_images(products_id,image)
+         		mysqli_query($link,"INSERT INTO uploads_images(products_id,image)
 						VALUES(						
                             '".$id."',
                             '".$newfilename."'                              

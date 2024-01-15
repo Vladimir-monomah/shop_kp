@@ -1,13 +1,13 @@
 <?php
 	defined('it') or die('Доступ запрещён!');
     
-     $result1 = mysql_query("SELECT * FROM orders WHERE order_confirmed='no'",$link);
-    $count1 = mysql_num_rows($result1);
+     $result1 = mysqli_query($link,"SELECT * FROM orders WHERE order_confirmed='no'",$link);
+    $count1 = mysqli_num_rows($result1);
     
     if ($count1 > 0) { $count_str1 = '<p>+'.$count1.'</p>'; } else { $count_str1 = ''; }
  
-    $result2 = mysql_query("SELECT * FROM table_reviews WHERE moderat='0'",$link);
-    $count2 = mysql_num_rows($result2);
+    $result2 = mysqli_query($link,"SELECT * FROM table_reviews WHERE moderat='0'",$link);
+    $count2 = mysqli_num_rows($result2);
     
     if ($count2 > 0) { $count_str2 = '<p>+'.$count2.'</p>'; } else { $count_str2 = ''; }
  

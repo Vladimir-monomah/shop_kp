@@ -29,14 +29,14 @@ if ($_SESSION['add_category'] == '1')
       $_SESSION['message'] = "<p id='form-error'>".implode('<br />',$error)."</p>"; 
   }else
   {
-     $cat_type = clear_string($_POST["cat_type"]);
-     $cat_brand = clear_string($_POST["cat_brand"]);
+     $cat_type = clear_string($_POST["cat_type"],$link);
+     $cat_brand = clear_string($_POST["cat_brand"],$link);
     
-                    mysql_query("INSERT INTO category(type,brand)
+                    mysqli_query($link,"INSERT INTO category(type,brand)
 						VALUES(						
                             '".$cat_type."',
                             '".$cat_brand."'                              
-						)",$link);
+						)");
                    
      $_SESSION['message'] = "<p id='form-success'>Категория успешно добавлена в базу данных!</p>";   
   }
@@ -100,11 +100,11 @@ if (isset($msgerror)) echo '<p id="form-error" align="center">'.$msgerror.'</p>'
 <select name="cat_type" id="cat_type" size="10">
 
 <?php
-$result = mysql_query("SELECT * FROM category ORDER BY type DESC",$link);
+$result = mysqli_query($link,"SELECT * FROM category ORDER BY type DESC");
  
- If (mysql_num_rows($result) > 0)
+ If (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 do
 {
 	echo '
@@ -113,7 +113,7 @@ do
     
     ';
 }
- while ($row = mysql_fetch_array($result));
+ while ($row = mysqli_fetch_array($result));
 }    
 ?>
 

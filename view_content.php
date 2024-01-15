@@ -6,23 +6,24 @@ define('it', true);
    include("include/auth_cookie.php");
    include("function/localization.php");
   
-   $id = clear_string($_GET["id"]); 
+   $id = clear_string($_GET["id"],$link); 
 
-     $seoquery = mysql_query("SELECT seo_words,seo_description,type_tovara FROM table_products WHERE products_id='$id' AND visible='1'",$link);
+   $seoquery = mysqli_query($link, "SELECT seo_words, seo_description, type_tovara FROM table_products WHERE products_id='$id' AND visible='1'");
+
+   if (mysqli_num_rows($seoquery) > 0) {
+       $resquery = mysqli_fetch_array($seoquery);
+   }
      
-     If (mysql_num_rows($seoquery) > 0)
-     {
-        $resquery = mysql_fetch_array($seoquery);
-     }   
    
   If ($id != $_SESSION['countid'])
 {
-$querycount = mysql_query("SELECT count FROM table_products WHERE products_id='$id'",$link);
-$resultcount = mysql_fetch_array($querycount); 
-
-$newcount = $resultcount["count"] + 1;
-
-$update = mysql_query ("UPDATE table_products SET count='$newcount' WHERE products_id='$id'",$link);  
+    $querycount = mysqli_query($link, "SELECT count FROM table_products WHERE products_id='$id'");
+    $resultcount = mysqli_fetch_array($querycount);
+    
+    $newcount = $resultcount["count"] + 1;
+    
+    $update = mysqli_query($link, "UPDATE table_products SET count='$newcount' WHERE products_id='$id'");
+     
 }
 
 $_SESSION['countid'] = $id; 
@@ -90,10 +91,10 @@ $(document).ready(function(){
 </div>
 <div id="block-content">
 <?php
-$result1 = mysql_query("SELECT * FROM table_products WHERE products_id='$id' AND visible='1'",$link);
-If (mysql_num_rows($result1) > 0)
+$result1 = mysqli_query($link, "SELECT * FROM table_products WHERE products_id='$id' AND visible='1'");
+If (mysqli_num_rows($result1) > 0)
 {
-$row1 = mysql_fetch_array($result1);
+$row1 = mysqli_fetch_array($result1);
 do
 {   
 if  (strlen($row1["image"]) > 0 && file_exists("./uploads_images/".$row1["image"]))
@@ -116,8 +117,8 @@ $height = 200;
 }     
 
 // Количество отзывов 
-$query_reviews = mysql_query("SELECT * FROM table_reviews WHERE products_id = '$id' AND moderat='1'",$link);  
-$count_reviews = mysql_num_rows($query_reviews);
+$query_reviews = mysqli_query($link,"SELECT * FROM table_reviews WHERE products_id = '$id' AND moderat='1'");  
+$count_reviews = mysqli_num_rows($query_reviews);
 
 $type_tovara;
 if($resquery["type_tovara"] == 'paper')
@@ -168,13 +169,13 @@ echo  '
 
    
 }
- while ($row1 = mysql_fetch_array($result1));
+ while ($row1 = mysqli_fetch_array($result1));
 
 
- $result = mysql_query("SELECT * FROM uploads_images WHERE products_id='$id'",$link);
-If (mysql_num_rows($result) > 0)
+ $result = mysqli_query($link,"SELECT * FROM uploads_images WHERE products_id='$id'");
+If (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 echo '<div id="block-img-slide">
       <ul type="none">';
 do
@@ -199,15 +200,15 @@ echo '
 <a style="display:none;" class="image-modal" rel="group" id="image'.$row["id"].'" ><img  src="./uploads_images/'.$row["image"].'" /></a>
 ';
 }
- while ($row = mysql_fetch_array($result));
+ while ($row = mysqli_fetch_array($result));
  echo '
  </ul>
  </div>    
         ';
 }
 
-$result = mysql_query("SELECT * FROM table_products WHERE products_id='$id' AND visible='1'",$link);
-$row = mysql_fetch_array($result);
+$result = mysqli_query($link,"SELECT * FROM table_products WHERE products_id='$id' AND visible='1'");
+$row = mysqli_fetch_array($result);
 
 echo '
 
@@ -225,11 +226,11 @@ echo '
 <p id="link-send-review" ><a class="send-review" href="#send-review" >'.localize_text('Написать отзыв о товаре', $_SESSION["lang"], $link).'</a></p>
 ';
 
-$query_reviews = mysql_query("SELECT * FROM table_reviews WHERE products_id='$id' ORDER BY reviews_id DESC",$link);
+$query_reviews = mysqli_query($link, "SELECT * FROM table_reviews WHERE products_id='$id' ORDER BY reviews_id DESC");
 
-If (mysql_num_rows($query_reviews) > 0)
+If (mysqli_num_rows($query_reviews) > 0)
 {
-$row_reviews = mysql_fetch_array($query_reviews);
+$row_reviews = mysqli_fetch_array($query_reviews);
 do
 {
 
@@ -247,7 +248,7 @@ echo '
 ';
         
 }
- while ($row_reviews = mysql_fetch_array($query_reviews));
+ while ($row_reviews = mysqli_fetch_array($query_reviews));
 }
 else
 {

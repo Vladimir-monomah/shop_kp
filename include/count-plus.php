@@ -1,21 +1,19 @@
 <?php
-if($_SERVER["REQUEST_METHOD"] == "POST")
-{
-define('it', true);
-include("db_connect.php");
-include("../function/function.php");
-include("./auth_cookie.php");
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    define('it', true);
+    include("db_connect.php");
+    include("../function/function.php");
+    include("./auth_cookie.php");
 
-$id = clear_string($_POST["id"]);
+    $id = clear_string($_POST["id"],$link);
 
-$user_uid = isset($_SESSION['id']) ? $_SESSION['id'] : $_SERVER['REMOTE_ADDR'];
-$result = mysql_query("SELECT * FROM cart WHERE cart_id = '$id' AND cart_ip='$user_uid'",$link);
-If (mysql_num_rows($result) > 0)
-{
-$row = mysql_fetch_array($result);    
-$new_count = $row["cart_count"] + 1;
-$update = mysql_query ("UPDATE cart SET cart_count='$new_count' WHERE cart_id='$id'",$link);
-echo $new_count;    
-}
+    $user_uid = isset($_SESSION['id']) ? $_SESSION['id'] : $_SERVER['REMOTE_ADDR'];
+    $result = mysqli_query($link, "SELECT * FROM cart WHERE cart_id = '$id' AND cart_ip='$user_uid'");
+    if (mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_array($result);
+        $new_count = $row["cart_count"] + 1;
+        $update = mysqli_query($link, "UPDATE cart SET cart_count='$new_count' WHERE cart_id='$id'");
+        echo $new_count;
+    }
 }
 ?>

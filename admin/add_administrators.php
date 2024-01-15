@@ -24,10 +24,10 @@ if ($_POST["submit_add"])
     
     if ($_POST["admin_login"])
     {
-        $login = clear_string($_POST["admin_login"]);
-        $query = mysql_query("SELECT login FROM reg_admin WHERE login='$login'",$link);
+        $login = clear_string($_POST["admin_login"],$link);
+        $query = mysqli_query($link,"SELECT login FROM reg_admin WHERE login='$login'");
  
-     If (mysql_num_rows($query) > 0)
+     If (mysqli_num_rows($query) > 0)
      {
         $error[] = "Данный логин уже используется!";
      }
@@ -49,18 +49,18 @@ if ($_POST["submit_add"])
     $_SESSION['message'] = "<p id='form-error'>".implode('<br />',$error)."</p>";
  }else
  {
-    $pass   = md5(clear_string($_POST["admin_pass"]));
+    $pass   = md5(clear_string($_POST["admin_pass"],$link));
     $pass   = strrev($pass);
     $pass   = strtolower("mb03foo51".$pass."qj2jjdp9");
     
-                  		mysql_query("INSERT INTO reg_admin(login,pass,fio,role,email,phone,view_orders,accept_orders,delete_orders,add_tovar,edit_tovar,delete_tovar,accept_reviews,delete_reviews,view_clients,delete_clients,add_news,delete_news,add_category,delete_category,view_admin)
+                  		mysqli_query($link,"INSERT INTO reg_admin(login,pass,fio,role,email,phone,view_orders,accept_orders,delete_orders,add_tovar,edit_tovar,delete_tovar,accept_reviews,delete_reviews,view_clients,delete_clients,add_news,delete_news,add_category,delete_category,view_admin)
 						VALUES(						
-                            '".clear_string($_POST["admin_login"])."',
+                            '".clear_string($_POST["admin_login"],$link)."',
                             '".$pass."',
-                            '".clear_string($_POST["admin_fio"])."',
-                            '".clear_string($_POST["admin_role"])."',
-                            '".clear_string($_POST["admin_email"])."',
-                            '".clear_string($_POST["admin_phone"])."',
+                            '".clear_string($_POST["admin_fio"],$link)."',
+                            '".clear_string($_POST["admin_role"],$link)."',
+                            '".clear_string($_POST["admin_email"],$link)."',
+                            '".clear_string($_POST["admin_phone"],$link)."',
                             '".$_POST["view_orders"]."',
                             '".$_POST["accept_orders"]."',
                             '".$_POST["delete_orders"]."',							
@@ -78,7 +78,7 @@ if ($_POST["submit_add"])
                             '".$_POST["view_admin"]."'
                             
                                                                                                                                                 
-						)",$link);
+						)");
                    
           $_SESSION['message'] = "<p id='form-success'>Пользователь успешно добавлен!</p>";
  }   

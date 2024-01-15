@@ -7,8 +7,8 @@
     
  If ($_POST["submit_enter"])
  {
-    $login = clear_string($_POST["input_login"]);
-    $pass  = clear_string($_POST["input_pass"]);
+    $login = clear_string($_POST["input_login"],$link);
+    $pass  = clear_string($_POST["input_pass"],$link);
     
   
  if ($login && $pass)
@@ -18,11 +18,11 @@
     $pass   = strrev($pass);
     $pass   = strtolower("mb03foo51".$pass."qj2jjdp9");     
     
-   $result = mysql_query("SELECT * FROM reg_admin WHERE login = '$login' AND pass = '$pass'",$link);
+   $result = mysqli_query($link,"SELECT * FROM reg_admin WHERE login = '$login' AND pass = '$pass'");
    
- If (mysql_num_rows($result) > 0)
+ If (mysqli_num_rows($result) > 0)
   {
-    $row = mysql_fetch_array($result);
+    $row = mysqli_fetch_array($result);
 
     $_SESSION['auth_admin'] = 'yes_auth'; 
     

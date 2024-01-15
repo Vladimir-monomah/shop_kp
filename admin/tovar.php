@@ -70,8 +70,8 @@ if (isset($cat))
         
         $cat_name = $cat;
      
-        $url = "type=".clear_string($type)."&cat=".clear_string($cat)."&";
-        $cat = "WHERE type_tovara='".clear_string($type)."' AND brand='".clear_string($cat)."'"; 
+        $url = "type=".clear_string($type,$link)."&cat=".clear_string($cat,$link)."&";
+        $cat = "WHERE type_tovara='".clear_string($type,$link)."' AND brand='".clear_string($cat,$link)."'"; 
         
              
 	    break;
@@ -97,7 +97,7 @@ if (isset($action))
    if ($_SESSION['delete_tovar'] == '1')
    {
 
-           $delete = mysql_query("DELETE FROM table_products WHERE products_id = '$id'",$link);  
+           $delete = mysqli_query($link,"DELETE FROM table_products WHERE products_id = '$id'");  
     
    }else
    {
@@ -129,8 +129,8 @@ if (isset($action))
 <?php
 	include("include/block-header.php");
     
- $all_count = mysql_query("SELECT * FROM table_products",$link);
- $all_count_result = mysql_num_rows($all_count);
+ $all_count = mysqli_query($link,"SELECT * FROM table_products");
+ $all_count_result = mysqli_num_rows($all_count);
 ?>
 <!--Основной блок контента-->
 <div id="block-content">
@@ -147,64 +147,64 @@ if (isset($action))
 <?php
 
 
- $result1 = mysql_query("SELECT * FROM category WHERE type='paper'",$link);
-  If (mysql_num_rows($result1) > 0)
+ $result1 = mysqli_query($link,"SELECT * FROM category WHERE type='paper'");
+  If (mysqli_num_rows($result1) > 0)
 {
-$row1 = mysql_fetch_array($result1);
+$row1 = mysqli_fetch_array($result1);
 do
 {
     
  echo '<li><a href="tovar.php?type='.$row1["type"].'&cat='.$row1["brand"].'">'.$row1["brand"].'</a></li>';   
     
-} while ($row1 = mysql_fetch_array($result1));
+} while ($row1 = mysqli_fetch_array($result1));
 }
 ?>
 </ul>
 <ul>
 <li><a href="tovar.php?cat=paints"><strong>Краски</strong></a></li>
 <?php
- $result1 = mysql_query("SELECT * FROM category WHERE type='paints'",$link);
-  If (mysql_num_rows($result1) > 0)
+ $result1 = mysqli_query($link,"SELECT * FROM category WHERE type='paints'");
+  If (mysqli_num_rows($result1) > 0)
 {
-$row1 = mysql_fetch_array($result1);
+$row1 = mysqli_fetch_array($result1);
 do
 {
     
  echo '<li><a href="tovar.php?type='.$row1["type"].'&cat='.$row1["brand"].'">'.$row1["brand"].'</a></li>';   
     
-} while ($row1 = mysql_fetch_array($result1));
+} while ($row1 = mysqli_fetch_array($result1));
 }
 ?>
 </ul>
 <ul>
 <li><a href="tovar.php?cat=graphics"><strong>Графика</strong></a></li>
 <?php
- $result1 = mysql_query("SELECT * FROM category WHERE type='graphics'",$link);
-  If (mysql_num_rows($result1) > 0)
+ $result1 = mysqli_query($link,"SELECT * FROM category WHERE type='graphics'");
+  If (mysqli_num_rows($result1) > 0)
 {
-$row1 = mysql_fetch_array($result1);
+$row1 = mysqli_fetch_array($result1);
 do
 {
     
  echo '<li><a href="tovar.php?type='.$row1["type"].'&cat='.$row1["brand"].'">'.$row1["brand"].'</a></li>';   
     
-} while ($row1 = mysql_fetch_array($result1));
+} while ($row1 = mysqli_fetch_array($result1));
 }
 ?>
 </ul>
 <ul>
 <li><a href="tovar.php?cat=other"><strong>Прочее</strong></a></li>
 <?php
- $result1 = mysql_query("SELECT * FROM category WHERE type='other'",$link);
-  If (mysql_num_rows($result1) > 0)
+ $result1 = mysqli_query($link,"SELECT * FROM category WHERE type='other'");
+  If (mysqli_num_rows($result1) > 0)
 {
-$row1 = mysql_fetch_array($result1);
+$row1 = mysqli_fetch_array($result1);
 do
 {
     
  echo '<li><a href="tovar.php?type='.$row1["type"].'&cat='.$row1["brand"].'">'.$row1["brand"].'</a></li>';   
     
-} while ($row1 = mysql_fetch_array($result1));
+} while ($row1 = mysqli_fetch_array($result1));
 }
 ?>
 </ul>
@@ -226,8 +226,8 @@ $num = 6;
 
 $page = (int)$_GET['page'];              
 
-$count = mysql_query("SELECT COUNT(*) FROM table_products $cat",$link);
-$temp = mysql_fetch_array($count);
+$count = mysqli_query($link,"SELECT COUNT(*) FROM table_products $cat");
+$temp = mysqli_fetch_array($count);
 $post = $temp[0];
 // Находим общее число страниц
 $total = (($post - 1) / $num) + 1;
@@ -245,11 +245,11 @@ $start = $page * $num - $num;
 	
 if ($temp[0] > 0)   
 {
-$result = mysql_query("SELECT * FROM table_products $cat ORDER BY products_id DESC LIMIT $start, $num",$link);
+$result = mysqli_query($link,"SELECT * FROM table_products $cat ORDER BY products_id DESC LIMIT $start, $num");
  
- If (mysql_num_rows($result) > 0)
+ If (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 do
 {
     if  (strlen($row["image"]) > 0 && file_exists("../uploads_images/".$row["image"]))
@@ -284,7 +284,7 @@ $height = 164;
  </li> 
  ';   
     
-} while ($row = mysql_fetch_array($result));
+} while ($row = mysqli_fetch_array($result));
 echo'
 </ul>
 ';

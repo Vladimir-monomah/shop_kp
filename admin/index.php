@@ -30,17 +30,17 @@ if ($_SESSION['auth_admin'] == "yes_auth")
 <?php
 	include("include/block-header.php"); 
      // Общее количество заказов 
- $query1 = mysql_query("SELECT * FROM orders",$link);
- $result1 = mysql_num_rows($query1);
+ $query1 = mysqli_query($link,"SELECT * FROM orders");
+ $result1 = mysqli_num_rows($query1);
  // Общее количество товаров 
- $query2 = mysql_query("SELECT * FROM table_products",$link);
- $result2 = mysql_num_rows($query2);   
+ $query2 = mysqli_query($link,"SELECT * FROM table_products");
+ $result2 = mysqli_num_rows($query2);   
  // Общее количество отзывов 
- $query3 = mysql_query("SELECT * FROM table_reviews",$link);
- $result3 = mysql_num_rows($query3);
+ $query3 = mysqli_query($link,"SELECT * FROM table_reviews");
+ $result3 = mysqli_num_rows($query3);
   // Общее количество клиентов 
- $query4 = mysql_query("SELECT * FROM reg_user",$link);
- $result4 = mysql_num_rows($query4);
+ $query4 = mysqli_query($link,"SELECT * FROM reg_user");
+ $result4 = mysqli_num_rows($query4);
 ?>
 <!--Основной блок тела сайта -->
 <div id="block-content">
@@ -67,18 +67,18 @@ if ($_SESSION['auth_admin'] == "yes_auth")
 </TR>
 <?php
 
-$result = mysql_query("SELECT * FROM orders,buy_products WHERE orders.order_pay='accepted' AND orders.order_id=buy_products.buy_id_order",$link);
+$result = mysqli_query($link,"SELECT * FROM orders,buy_products WHERE orders.order_pay='accepted' AND orders.order_id=buy_products.buy_id_order");
  
- If (mysql_num_rows($result) > 0)
+ If (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 do
 {
 
- $result2 = mysql_query("SELECT * FROM table_products WHERE products_id='{$row["buy_id_product"]}'",$link);   
-  If (mysql_num_rows($result2) > 0)
+ $result2 = mysqli_query($link,"SELECT * FROM table_products WHERE products_id='{$row["buy_id_product"]}'");   
+  If (mysqli_num_rows($result2) > 0)
 {
- $row2 = mysql_fetch_array($result2);
+ $row2 = mysqli_fetch_array($result2);
 }
     
 $statuspay = "";
@@ -94,7 +94,7 @@ echo '
 ';
 
 	}
-     while ($row = mysql_fetch_array($result));
+     while ($row = mysqli_fetch_array($result));
 }     
 ?>
 </TABLE>

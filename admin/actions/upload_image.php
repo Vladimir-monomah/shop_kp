@@ -35,7 +35,7 @@ $uploadfile = $uploaddir.$newfilename;
 if (move_uploaded_file($_FILES['upload_image']['tmp_name'], $uploadfile))
 {
 
-  $update = mysql_query("UPDATE table_products SET image='$newfilename' WHERE products_id = '$id'",$link);   
+  $update = mysqli_query($link,"UPDATE table_products SET image='$newfilename' WHERE products_id = '$id'",$link);   
 
 }
 else

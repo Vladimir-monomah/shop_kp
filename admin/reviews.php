@@ -15,7 +15,7 @@ if ($_SESSION['auth_admin'] == "yes_auth")
   include("include/db_connect.php");
   include("include/function.php"); 
    
-    $id = clear_string($_GET["id"]);    
+    $id = clear_string($_GET["id"],$link);    
     $sort = $_GET["sort"];
 	
    switch ($sort) {
@@ -55,7 +55,7 @@ if (isset($action))
   if ($_SESSION['accept_reviews'] == '1')
    {
 
-        $update = mysql_query("UPDATE table_reviews SET moderat='1' WHERE reviews_id = '$id'",$link);  
+        $update = mysqli_query($link,"UPDATE table_reviews SET moderat='1' WHERE reviews_id = '$id'");  
     
    }else
    {
@@ -67,7 +67,7 @@ if (isset($action))
    if ($_SESSION['delete_reviews'] == '1')
    {
 
-        $delete = mysql_query("DELETE FROM table_reviews WHERE reviews_id = '$id'",$link);      
+        $delete = mysqli_query($link,"DELETE FROM table_reviews WHERE reviews_id = '$id'");      
        
    }  else
    {
@@ -100,11 +100,11 @@ if (isset($action))
 <?php
 	include("include/block-header.php");
     
- $all_count = mysql_query("SELECT * FROM table_reviews",$link);
- $all_count_result = mysql_num_rows($all_count);
+ $all_count = mysqli_query($link,"SELECT * FROM table_reviews");
+ $all_count_result = mysqli_num_rows($all_count);
 
- $no_accept_count = mysql_query("SELECT * FROM table_reviews WHERE moderat = '0'",$link);
- $no_accept_count_result = mysql_num_rows($no_accept_count); 
+ $no_accept_count = mysqli_query($link,"SELECT * FROM table_reviews WHERE moderat = '0'");
+ $no_accept_count_result = mysqli_num_rows($no_accept_count); 
 ?>
 <!--Основной блок контента-->
 <div id="block-content">
@@ -133,10 +133,10 @@ if (isset($msgerror)) echo '<p id="form-error" align="center">'.$msgerror.'</p>'
     $num = 4;
 
     $page = strip_tags($_GET['page']);              
-    $page = mysql_real_escape_string($page);
+    $page = mysqli_real_escape_string($page);
 
-$count = mysql_query("SELECT COUNT(*) FROM table_reviews",$link);
-$temp = mysql_fetch_array($count);
+$count = mysqli_query($link,"SELECT COUNT(*) FROM table_reviews");
+$temp = mysqli_fetch_array($count);
 $post = $temp[0];
 // Находим общее число страниц
 $total = ($post / $num) + 1;
@@ -153,13 +153,13 @@ if(empty($page) or $page <= 0) $page = 1;
 $start = intval($page * $num - $num);
 //die("SELECT * FROM table_reviews,table_products 
 //WHERE table_products.products_id = table_reviews.products_id ORDER BY $sort LIMIT $start, $num");
-$result = mysql_query(
-"SELECT * FROM table_reviews,table_products 
-WHERE table_products.products_id = table_reviews.products_id ORDER BY $sort LIMIT $start, $num",$link) or die(mysql_error());
+$result = mysqli_query(
+    $link,"SELECT * FROM table_reviews,table_products 
+WHERE table_products.products_id = table_reviews.products_id ORDER BY $sort LIMIT $start, $num");
  
- If (mysql_num_rows($result) > 0)
+ If (mysqli_num_rows($result) > 0)
 {
-$row = mysql_fetch_array($result);
+$row = mysqli_fetch_array($result);
 do
 {
     if  (strlen($row["image"]) > 0 && file_exists("../uploads_images/".$row["image"]))
@@ -202,7 +202,7 @@ if ($row["moderat"] == '0'){ $link_accept = '<a class="green" href="reviews.php?
  </div>
  ';   
     
-} while ($row = mysql_fetch_array($result));
+} while ($row = mysqli_fetch_array($result));
 }   
    
 if ($page != 1) $pervpage = '<li><a class="pstr-prev" href="reviews.php?page='. ($page - 1) .'" />Назад</a></li>';

@@ -10,13 +10,13 @@ function localize_text($source_text, $destination_locale, $link)
 	    die("Нет соединения");
 	}
 
-	$localization_result = mysql_query("SELECT * FROM localization WHERE id = '$id'", $link) or die("Ошибка 1: ".mysql_error());
-	$locale_text_row = mysql_fetch_array($localization_result);
+	$localization_result = mysqli_query($link, "SELECT * FROM localization WHERE id = '$id'") or die("Ошибка 1: ".mysqli_error($link));
+	$locale_text_row = mysqli_fetch_array($localization_result);
 	
 	if(!$locale_text_row)
 	{
 		// Такой строки ещё не существует в БД, добавляем
-		mysql_query("INSERT INTO localization (id, ".$default_lang.") VALUES('".$id."', '".$source_text."')", $link) or die("Ошибка 2: ".mysql_error());
+		mysqli_query($link, "INSERT INTO localization (id, ".$default_lang.") VALUES('".$id."', '".$source_text."')") or die("Ошибка 2: ".mysqli_error($link));
 
 		// Т.к. перевод ещё не был сделан, то вернём исходную строку
 		return $source_text;
